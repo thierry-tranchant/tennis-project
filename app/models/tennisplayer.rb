@@ -1,5 +1,6 @@
 class Tennisplayer < ApplicationRecord
-  has_and_belongs_to_many :scrapps
+  has_many :participants
+  has_many :scrapps, through: :participants
   has_and_belongs_to_many :tournaments
   has_many :wins, class_name: 'Game', foreign_key: 'winner_id'
   has_many :loses, class_name: 'Game', foreign_key: 'loser_id'

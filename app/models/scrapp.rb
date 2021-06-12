@@ -4,7 +4,7 @@ require 'nokogiri'
 BASE_URL = "https://www.atptour.com/en/tournaments"
 
 class Scrapp < ApplicationRecord
-  has_and_belongs_to_many :tennisplayers
+  has_many :participants
   has_many :tournaments
 
   def self.fetch_tournaments_data(tournament_year)
@@ -13,8 +13,6 @@ class Scrapp < ApplicationRecord
 
     Scrapp.create_scrapp_record(html_doc, tournament_year)
   end
-
-  private
 
   def self.create_scrapp_record(html_doc, tournament_year)
     index = 1
@@ -30,4 +28,6 @@ class Scrapp < ApplicationRecord
       index += 1
     end
   end
+
+  private_class_method :create_scrapp_record
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_12_102514) do
+ActiveRecord::Schema.define(version: 2021_06_12_143748) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -81,11 +81,6 @@ ActiveRecord::Schema.define(version: 2021_06_12_102514) do
     t.string "draw_url"
     t.integer "tournament_year"
     t.string "tournament_location"
-  end
-
-  create_table "scrapps_tennisplayers", id: false, force: :cascade do |t|
-    t.bigint "tennisplayer_id", null: false
-    t.bigint "scrapp_id", null: false
   end
 
   create_table "tennisplayers", force: :cascade do |t|
