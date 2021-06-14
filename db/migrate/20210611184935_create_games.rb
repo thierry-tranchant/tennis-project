@@ -1,7 +1,6 @@
 class CreateGames < ActiveRecord::Migration[6.0]
   def change
     create_table :games do |t|
-      t.references :tournament, null: false, foreign_key: true
       t.integer :first_player_id
       t.integer :second_player_id
       t.integer :winner_id

@@ -10,13 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_12_143748) do
+ActiveRecord::Schema.define(version: 2021_06_14_083210) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "games", force: :cascade do |t|
-    t.bigint "tournament_id", null: false
     t.integer "first_player_id"
     t.integer "second_player_id"
     t.integer "winner_id"
@@ -27,7 +26,8 @@ ActiveRecord::Schema.define(version: 2021_06_12_143748) do
     t.integer "index"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["tournament_id"], name: "index_games_on_tournament_id"
+    t.bigint "scrapp_id", null: false
+    t.index ["scrapp_id"], name: "index_games_on_scrapp_id"
   end
 
   create_table "leagueplayers", force: :cascade do |t|
@@ -51,6 +51,18 @@ ActiveRecord::Schema.define(version: 2021_06_12_143748) do
   create_table "leagues_users", id: false, force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "league_id", null: false
+  end
+
+  create_table "participants", force: :cascade do |t|
+    t.bigint "scrapp_id", null: false
+    t.bigint "tennisplayer_id", null: false
+    t.integer "seed"
+    t.boolean "qualified"
+    t.boolean "wildcard"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["scrapp_id"], name: "index_participants_on_scrapp_id"
+    t.index ["tennisplayer_id"], name: "index_participants_on_tennisplayer_id"
   end
 
   create_table "pronos", force: :cascade do |t|
@@ -81,6 +93,7 @@ ActiveRecord::Schema.define(version: 2021_06_12_143748) do
     t.string "draw_url"
     t.integer "tournament_year"
     t.string "tournament_location"
+    t.string "state"
   end
 
   create_table "tennisplayers", force: :cascade do |t|
@@ -124,9 +137,11 @@ ActiveRecord::Schema.define(version: 2021_06_12_143748) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "games", "tournaments"
+  add_foreign_key "games", "scrapps"
   add_foreign_key "leagueplayers", "leagues"
   add_foreign_key "leagueplayers", "users"
+  add_foreign_key "participants", "scrapps"
+  add_foreign_key "participants", "tennisplayers"
   add_foreign_key "pronos", "games"
   add_foreign_key "pronos", "leagueplayers"
   add_foreign_key "pronos", "tournaments"
