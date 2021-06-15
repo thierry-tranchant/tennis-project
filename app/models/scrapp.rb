@@ -1,7 +1,7 @@
 require 'open-uri'
 require 'nokogiri'
 
-BASE_URL = "https://www.atptour.com/en/tournaments"
+# BASE_URL = "https://www.atptour.com/en/tournaments"
 
 class Scrapp < ApplicationRecord
   has_many :participants
@@ -47,24 +47,49 @@ class Scrapp < ApplicationRecord
     end
   end
 
-  def self.fill_finished_tournaments
-    # tournaments = Scrapp.where.not(state: 'finished')
-    html_file = URI.open('https://www.atptour.com/en/scores/archive/delray-beach/499/2020/draws').read
+  def set_state
+    return if start_date.nil?
+
+    html_file = URI.open(draw_url).read
     html_doc = Nokogiri::HTML(html_file)
-    p html_doc.search('.day-table').search('th').first
-
-    # tournaments.each do |tournament|
-    #    html_file = URI.open(tournament.draw_url).read
-    # end
-    # html_file = URI.open(BASE_URL).read
-    # html_doc = Nokogiri::HTML(html_file)
-    # day-table
-
-    # (start_year..end_year).to_a.each do |year|
-
-    # end
-    # tournaments = Scrapp.where(tournament_year: tournament_year)
-    # html_file = URI.open(BASE_URL).read
-    # html_doc = Nokogiri::HTML(html_file)
+    test_id = html_doc.search('#scoresDrawTableContent')
+    self.state = 'finished' unless test_id.empty?
+    unless state == 'finished'
+      html_file = URI.open("https://www.atptour.com/en/scores/current/#{tournament_location}/#{tournament_number}/draws").read
+      html_doc = Nokogiri::HTML(html_file)
+      test_id = html_doc.search('#scoresDrawTableContent')
+      self.state = test_id.empty? ? 'to_come' : 'current'
+    end
+    save
   end
+
+  def self.fill_states
+    scrapps = Scrapp.all
+    scrapps.each(&:set_state)
+  end
+
+
+
+  # def self.fill_finished_tournaments
+  #   # tournaments = Scrapp.where.not(state: 'finished')
+  #   html_file = URI.open('https://www.atptour.com/en/scores/archive/delray-beach/499/2020/draws').read
+  #   html_doc = Nokogiri::HTML(html_file)
+  #   test_value = html_doc.search('.day-table').search('th').first
+  #   if test_value.nil?
+
+
+  #   # tournaments.each do |tournament|
+  #   #    html_file = URI.open(tournament.draw_url).read
+  #   # end
+  #   # html_file = URI.open(BASE_URL).read
+  #   # html_doc = Nokogiri::HTML(html_file)
+  #   # day-table
+
+  #   # (start_year..end_year).to_a.each do |year|
+
+  #   # end
+  #   # tournaments = Scrapp.where(tournament_year: tournament_year)
+  #   # html_file = URI.open(BASE_URL).read
+  #   # html_doc = Nokogiri::HTML(html_file)
+  # end
 end
