@@ -63,6 +63,10 @@ class Scrapp < ApplicationRecord
     save
   end
 
+  def set_draw
+    self.drawed = true unless participants.count.zero?
+  end
+
   def self.fill_states
     scrapps = Scrapp.all
     scrapps.each(&:set_state)
