@@ -10,8 +10,21 @@ class Tennisplayer < ApplicationRecord
   has_many :games_as_first_player, class_name: 'Game', foreign_key: 'first_player_id'
   has_many :games_as_second_player, class_name: 'Game', foreign_key: 'second_player_id'
 
-
   BASE_URL = 'https://www.atptour.com/en/rankings/singles'
+
+  def self.scrapp_from_players_page(url)
+    player_doc = Nokogiri::HTML(URI.open("https://www.atptour.com/#{url}").read)
+    nationality = player_doc.search('.player-flag-code').text.strip
+    age = player_doc.search('.table-big-value').first.text.strip.to_i
+    birthdate = Date.parse(player_doc.search('.table-birthday').text.strip[1..-2]) unless player_doc.search('.table-birthday').text.strip[1..-2].nil?
+    weight = /[0-9]+/.match(player_doc.search('.table-weight-kg-wrapper').text.strip).to_s.to_i
+    height = /[0-9]+/.match(player_doc.search('.table-height-cm-wrapper').text.strip).to_s.to_i
+    unless player_doc.search('.table-value').to_a[2].text.strip == ""
+      handed = player_doc.search('.table-value').to_a[2].text.strip.split(', ')[0].split('-').first.downcase
+      backhand = player_doc.search('.table-value').to_a[2].text.strip.split(', ')[1].split.first.downcase
+    end
+    { nationality: nationality, birthdate: birthdate, weight: weight, height: height, handed: handed, backhand: backhand, age: age }
+  end
 
   def self.scrapp_tennisplayers(url)
     html_file = URI.open(url).read
@@ -21,16 +34,8 @@ class Tennisplayer < ApplicationRecord
       last_name = element.search('.player-cell').text.strip.split[1..].join(" ")
       tennisplayer_url = element.search('.player-cell a').attribute('href').value
       age = element.search('.age-cell').text.strip
-      player_doc = Nokogiri::HTML(URI.open("https://www.atptour.com/#{tennisplayer_url}").read)
-      nationality = player_doc.search('.player-flag-code').text.strip
-      birthdate = Date.parse(player_doc.search('.table-birthday').text.strip[1..-2])
-      weight = /[0-9]+/.match(player_doc.search('.table-weight-kg-wrapper').text.strip).to_s.to_i
-      height = /[0-9]+/.match(player_doc.search('.table-height-cm-wrapper').text.strip).to_s.to_i
-      unless player_doc.search('.table-value').to_a[2].text.strip == ""
-        handed = player_doc.search('.table-value').to_a[2].text.strip.split(', ')[0].split('-').first.downcase
-        backhand = player_doc.search('.table-value').to_a[2].text.strip.split(', ')[1].split.first.downcase
-      end
-      Tennisplayer.create(first_name: first_name, last_name: last_name, tennisplayer_url: tennisplayer_url, age: age, nationality: nationality, birthdate: birthdate, weight: weight, height: height, handed: handed, backhand: backhand)
+      player_infos = scrapp_from_players_page(tennisplayer_url)
+      Tennisplayer.create(first_name: first_name, last_name: last_name, tennisplayer_url: tennisplayer_url, age: age, nationality: player_infos[:nationality], birthdate: player_infos[:birthdate], weight: player_infos[:weight], height: player_infos[:height], handed: player_infos[:handed], backhand: player_infos[:backhand])
     end
   end
 
