@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_14_110911) do
+ActiveRecord::Schema.define(version: 2021_06_14_153459) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -61,6 +61,8 @@ ActiveRecord::Schema.define(version: 2021_06_14_110911) do
     t.boolean "wildcard"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "index"
+    t.boolean "luckyloser"
     t.index ["scrapp_id"], name: "index_participants_on_scrapp_id"
     t.index ["tennisplayer_id"], name: "index_participants_on_tennisplayer_id"
   end
@@ -113,12 +115,12 @@ ActiveRecord::Schema.define(version: 2021_06_14_110911) do
     t.integer "height"
     t.integer "weight"
     t.string "nationality"
-    t.integer "atp_rank"
     t.integer "race_rank"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "tennisplayer_url"
     t.string "backhand"
+    t.date "birthdate"
   end
 
   create_table "tennisplayers_tournaments", id: false, force: :cascade do |t|
