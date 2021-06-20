@@ -8,6 +8,9 @@ class Scrapp < ApplicationRecord
   has_many :tournaments
   has_many :games
 
+  ROUNDS = [['finals', 1], ['semi-finals', 2], ['quarter-finals', 4], ['round of 16', 8], ['round of 32', 16], ['round of 64', 32], ['round of 128', 64]]
+  ROUNDS_NUMBER = [64, 32, 16, 8, 4, 2, 1]
+
   def self.create_scrapp_record(html_doc, tournament_year)
     index = 1
     html_doc.search('.tourney-result').each do |element|
@@ -65,6 +68,7 @@ class Scrapp < ApplicationRecord
 
   def set_draw
     self.drawed = true unless participants.count.zero?
+    save
   end
 
   def self.fill_states
@@ -72,28 +76,84 @@ class Scrapp < ApplicationRecord
     scrapps.each(&:set_state)
   end
 
+  def self.fill_draw_for_finished_tournaments
+    scrapps = Scrapp.all
+    scrapps.each(&:set_draw)
+  end
 
+  def initialize_games
+    fake_player = Tennisplayer.find_by(tennisplayer_url: 'fake_player')
+    (1..participants.count - 1).to_a.each do |index|
+      Game.create(scrapp: self, first_player: fake_player, second_player: fake_player, winner: fake_player, loser: fake_player, played: false, round: calculate_round(index, participants.count), index: index)
+    end
+  end
 
-  # def self.fill_finished_tournaments
-  #   # tournaments = Scrapp.where.not(state: 'finished')
-  #   html_file = URI.open('https://www.atptour.com/en/scores/archive/delray-beach/499/2020/draws').read
-  #   html_doc = Nokogiri::HTML(html_file)
-  #   test_value = html_doc.search('.day-table').search('th').first
-  #   if test_value.nil?
+  def self.initialize_games_for_finished_tournaments
+    scrapps = Scrapp.where(state: 'finished')
+    scrapps.each(&:initialize_games)
+  end
 
+  def fill_first_round_games
+    participants.select { |participant| participant.index.odd? }.each do |participant|
+      index = participant.index.div(2) + 1
+      game = Game.find_by(scrapp: self, index: index)
+      game.update(first_player: participant.tennisplayer, second_player: Participant.find_by(scrapp: self, index: participant.index + 1).tennisplayer)
+    end
+  end
 
-  #   # tournaments.each do |tournament|
-  #   #    html_file = URI.open(tournament.draw_url).read
-  #   # end
-  #   # html_file = URI.open(BASE_URL).read
-  #   # html_doc = Nokogiri::HTML(html_file)
-  #   # day-table
+  def fill_games_results(url)
+    html_doc = html_doc_from_url(url)
+    html_doc.search('.day-table tbody').reverse.each do |tbody|
+      next unless ROUNDS.map { |array| array[0] }.include?(tbody.previous_element.text.strip.downcase)
 
-  #   # (start_year..end_year).to_a.each do |year|
+      tbody.element_children.each do |child|
+        players_url = child.search('.day-table-name a').map { |link| link.attribute('href').value }
+        winner = Tennisplayer.find_by(tennisplayer_url: players_url[0])
+        loser = Tennisplayer.find_by(tennisplayer_url: players_url[1])
+        score = child.search('.day-table-score a').text.split(/\s+/).map(&:strip).join(' ').strip
+        game = update_current_game_result(winner, loser, score)
+        update_next_game_participant(game, winner) unless game.index == participants.count - 1
+      end
+    end
+  end
 
-  #   # end
-  #   # tournaments = Scrapp.where(tournament_year: tournament_year)
-  #   # html_file = URI.open(BASE_URL).read
-  #   # html_doc = Nokogiri::HTML(html_file)
-  # end
+  def self.fill_results_for_finished_tournaments
+    scrapps = Scrapp.where(state: 'finished')
+    scrapps.each do |scrapp|
+      scrapp.fill_first_round_games
+      scrapp.fill_games_results
+    end
+  end
+
+  private
+
+  def html_doc_from_url(url)
+    html_file = URI.open(url).read
+    Nokogiri::HTML(html_file)
+  end
+
+  def update_current_game_result(winner, loser, score)
+    game = Game.find_by(first_player: winner, second_player: loser, scrapp: self)
+    game = game.nil? ? Game.find_by(first_player: loser, second_player: winner, scrapp: self) : game
+    game.update(winner: winner, loser: loser, score: score, played: true)
+    game = Game.find_by(first_player: winner, second_player: loser, scrapp: self)
+    game.nil? ? Game.find_by(first_player: loser, second_player: winner, scrapp: self) : game
+  end
+
+  def update_next_game_participant(game, winner)
+    round_diff = game.index > game.round ? game.index - ROUNDS_NUMBER.select { |round_num| round_num > game.round }.sum : game.index
+    next_index = game.index + game.round - round_diff.div(2)
+    next_game = Game.find_by(scrapp: self, index: next_index)
+    if game.index.odd?
+      next_game.update(first_player: winner)
+    else
+      next_game.update(second_player: winner)
+    end
+    p "current index: #{game.index}, next index: #{next_game.index}"
+  end
+
+  def calculate_round(index, participants_number)
+    rounds = [64, 32, 16, 8, 4, 2, 1]
+    rounds.find { |round| participants_number - index >= round }
+  end
 end
