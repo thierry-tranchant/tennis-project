@@ -18,7 +18,12 @@ class Participant < ApplicationRecord
         first_name = tr.search('td').to_a[2].text.strip.split[0]
         first_name = 'Bye' if /Bye/.match?(first_name)
         last_name = tr.search('td').to_a[2].text.strip.split[1..].join(' ')
-        url = first_name == 'Bye' ? 'Bye' : tr.search('td a').attribute('href').value
+        case first_name
+        when 'Bye' then url = 'Bye'
+        when 'Lucky' then url = 'Lucky'
+        else
+          url = tr.search('td a').attribute('href').value
+        end
         tennisplayer = Tennisplayer.find_by(tennisplayer_url: url)
         if tennisplayer.nil?
           player_infos = Tennisplayer.scrapp_from_players_page(url)
@@ -49,5 +54,11 @@ class Participant < ApplicationRecord
       html_doc = Nokogiri::HTML(html_file)
       create_participants_from_draw_table(html_doc, scrapp)
     end
+  end
+
+  def self.fill_draw(scrapp, url)
+    html_file = URI.open(url).read
+    html_doc = Nokogiri::HTML(html_file)
+    create_participants_from_draw_table(html_doc, scrapp)
   end
 end
