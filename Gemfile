@@ -32,6 +32,8 @@ gem 'autoprefixer-rails', '10.2.5'
 gem 'font-awesome-sass'
 gem 'simple_form'
 
+gem 'sidekiq-scheduler'
+
 gem 'devise'
 
 gem 'sidekiq'
