@@ -5,4 +5,8 @@ class Game < ApplicationRecord
   belongs_to :second_player, class_name: 'Tennisplayer'
   belongs_to :winner, class_name: 'Tennisplayer'
   belongs_to :loser, class_name: 'Tennisplayer'
+
+  def initialize_games
+
+  end
 end
