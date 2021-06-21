@@ -57,7 +57,7 @@ class Scrapp < ApplicationRecord
     html_doc = Nokogiri::HTML(html_file)
     test_id = html_doc.search('#scoresDrawTableContent')
     self.state = 'finished' unless test_id.empty?
-    unless state == 'finished'
+    unless ['finished', 'suspended (covid)'].include?(state)
       html_file = URI.open("https://www.atptour.com/en/scores/current/#{tournament_location}/#{tournament_number}/draws").read
       html_doc = Nokogiri::HTML(html_file)
       test_id = html_doc.search('#scoresDrawTableContent')
@@ -109,7 +109,7 @@ class Scrapp < ApplicationRecord
       tbody.element_children.each do |child|
         players_url = child.search('.day-table-name a').map { |link| link.attribute('href').value }
         winner = Tennisplayer.find_by(tennisplayer_url: players_url[0])
-        loser = Tennisplayer.find_by(tennisplayer_url: players_url[1])
+        loser = players_url[1].nil? ? Tennisplayer.find_by(tennisplayer_url: 'Bye') : Tennisplayer.find_by(tennisplayer_url: players_url[1])
         score = child.search('.day-table-score a').text.split(/\s+/).map(&:strip).join(' ').strip
         game = update_current_game_result(winner, loser, score)
         update_next_game_participant(game, winner) unless game.index == participants.count - 1
@@ -117,13 +117,52 @@ class Scrapp < ApplicationRecord
     end
   end
 
-  def self.fill_results_for_finished_tournaments
-    scrapps = Scrapp.where(state: 'finished')
+  def fill_wins_against_bye(game_with_bye)
+    bye = Tennisplayer.find_by(tennisplayer_url: 'Bye')
+    winner = game_with_bye.first_player == bye ? game_with_bye.second_player : game_with_bye.first_player
+    score = 'Bye'
+    game = update_current_game_result(winner, bye, score)
+    update_next_game_participant(game, winner) unless game.index == participants.count - 1
+  end
+
+  def self.fill_results_for_finished_tournaments_from(id)
+    scrapps = Scrapp.where("state = 'finished' AND id >= ? AND tournament_location NOT IN ('atp-finals', 'nitto-atp-finals', 'tennis-masters-cup', 'next-gen-atp-finals') AND tournament_name != 'World Team Cup'", id)
     scrapps.each do |scrapp|
+      scrapp.games.destroy_all
+      scrapp.initialize_games
+      scrapp = scrapp.reload
       scrapp.fill_first_round_games
-      scrapp.fill_games_results
+      scrapp = scrapp.reload
+      scrapp.games.each do |game|
+        if game.first_player.tennisplayer_url == "Bye" || game.second_player.tennisplayer_url == "Bye"
+          scrapp.fill_wins_against_bye(game)
+        end
+      end
+      scrapp = scrapp.reload
+      scrapp.fill_games_results("https://www.atptour.com/en/scores/archive/#{scrapp.tournament_location}/#{scrapp.tournament_number}/#{scrapp.tournament_year}/results")
     end
   end
+
+  def reload
+    Scrapp.find(id)
+  end
+
+  def self.fill_suspended
+    scrapps = Scrapp.where(tournament_year: 2020, state: 'to_come')
+    scrapps.each do |scrapp|
+      scrapp.state = 'suspended (covid)'
+      scrapp.save
+    end
+  end
+
+  def self.erase_laver_cup
+    laver_cups = Scrapp.where(tournament_location: 'laver-cup')
+    laver_cups.each do |laver_cup|
+      laver_cup.destroy
+    end
+  end
+
+
 
   private
 
@@ -141,7 +180,8 @@ class Scrapp < ApplicationRecord
   end
 
   def update_next_game_participant(game, winner)
-    round_diff = game.index > game.round ? game.index - ROUNDS_NUMBER.select { |round_num| round_num > game.round }.sum : game.index
+    max_round = games.find_by(index: 1).round
+    round_diff = game.index > game.round ? game.index - ROUNDS_NUMBER.select { |round_num| round_num > game.round && round_num <= max_round }.sum : game.index
     next_index = game.index + game.round - round_diff.div(2)
     next_game = Game.find_by(scrapp: self, index: next_index)
     if game.index.odd?
