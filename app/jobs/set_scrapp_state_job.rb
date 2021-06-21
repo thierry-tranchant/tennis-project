@@ -5,7 +5,7 @@ class SetScrappStateJob < ApplicationJob
     scrapps = Scrapp.where("state IN ('to_come', 'current')")
     puts 'Successfully loaded scrapps...'
     scrapps.each do |scrapp|
-      scrapp.set_state if scrapp.start_date - Date.today < 1.month
+      scrapp.set_state if scrapp.start_date - Date.today < 1.month || Date.today - scrapp.end_date < 1.week
       puts "Successfully changed state of #{scrapp.tournament_location} (year: #{scrapp.tournament_year}) into #{scrapp.state} !"
     end
     puts "Job's finished!"
