@@ -12,6 +12,9 @@
   </head>
 
   <body>
-    <%= yield %>
+    <div class="min-h-90vh">
+      <%= render 'shared/navbar' %>
+      <%= yield %>
+    </div>
   </body>
 </html>

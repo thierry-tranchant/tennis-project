@@ -1,0 +1,15 @@
+.button {
+  padding-right: 30px;
+  padding-left: 30px;
+  padding-top: 11px;
+  padding-bottom: 16px;
+  border-radius: 25px;
+}
+
+.button-primary {
+  background-color: $blue;
+}
+
+.button-warning {
+  background-color: $orange;
+}
