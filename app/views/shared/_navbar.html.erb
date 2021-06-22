@@ -1,0 +1,23 @@
+<div class="navbar bg-primary d-flex justify-content-between align-items-center py-2">
+  <div class="navbar-left d-flex my-1 align-items-center">
+    <%= link_to root_path, class: 'mx-0' do %>
+      <%= image_tag 'ball.png', height: 40, width: 40 %>
+    <% end %>
+    <% if user_signed_in? %>
+      <a href="#" class='text-warning h4'>Résultats</a>
+    <% end %>
+  </div>
+  <div class="navbar-right d-flex my-1 align-items-center">
+    <% if user_signed_in? %>
+      <a href="#" class='text-warning h4'>Mes ligues</a>
+      <% if current_user.photo.attached? %>
+        <%= cl_image_tag current_user.photo.key, crop: :fill, class: 'avatar' %>
+      <% else %>
+        <%= image_tag 'blank_avatar.png', crop: :fill, class: 'avatar' %>
+      <% end %>
+    <% else %>
+      <a href="#" class='text-warning h4'>Se connecter</a>
+      <a href="#" class='text-warning h4'>S'inscrire</a>
+    <% end %>
+  </div>
+</div>
