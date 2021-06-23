@@ -12,20 +12,20 @@
 
 :schedule:
   set_scrapp_state_job:
-    cron: '0 0 1/12 ? * * *'   # Runs once per minute
+    cron: '0 1/12 * * *'
     class: SetScrappStateJob
   set_scrapp_drawed_job:
-    cron: '0 0 2/12 ? * * *'   # Runs once per minute
+    cron: '0 2/12 * * *'
     class: SetScrappDrawedJob
   fill_participants_and_create_first_round_games_job:
-    cron: '0 0 3/12 ? * * *'   # Runs once per minute
+    cron: '0 3/12 * * *'
     class: FillParticipantsAndCreateFirstRoundGamesJob
   reset_participants_while_qualified_and_luckyloser_in_draw_job:
-    cron: '0 0 4/12 ? * * *'   # Runs once per minute
+    cron: '* 4/12 * * *'
     class: ResetParticipantsWhileQualifiedAndLuckyloserInDrawJob
   fill_wins_with_bye_job:
-    cron: '0 0 5/12 ? * * *'
+    cron: '0 5/12 * * *'
     class: FillWinsWithByeJob
   fill_games_results_for_current_tournaments_job:
-    cron: '* * * * *'   # Runs once per minute
+    cron: '* 0/5 * * *'
     class: FillGamesResultsForCurrentTournamentsJob
