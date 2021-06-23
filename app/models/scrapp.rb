@@ -162,8 +162,6 @@ class Scrapp < ApplicationRecord
     end
   end
 
-
-
   private
 
   def html_doc_from_url(url)
