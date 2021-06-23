@@ -4,7 +4,7 @@ class ResetParticipantsWhileQualifiedAndLuckyloserInDrawJob < ApplicationJob
   def perform
     scrapps = Scrapp.where(state: 'current')
     scrapps.each do |scrapp|
-      next unless scrapp.participants.map { |participant| participant.tennisplayer.last_name }.any? { |name| ['Qualified', 'Lucky'].include?(name) }
+      next unless scrapp.participants.map { |participant| participant.tennisplayer.first_name }.any? { |name| ['Qualified', 'Lucky'].include?(name) }
 
       begin
         scrapp.participants.destroy_all
