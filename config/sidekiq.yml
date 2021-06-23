@@ -27,5 +27,5 @@
     cron: '0 0 5/12 ? * * *'
     class: FillWinsWithByeJob
   fill_games_results_for_current_tournaments_job:
-    cron: '0 0 0/4 ? * * *'   # Runs once per minute
+    cron: '* * * * *'   # Runs once per minute
     class: FillGamesResultsForCurrentTournamentsJob
