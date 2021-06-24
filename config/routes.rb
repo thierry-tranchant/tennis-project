@@ -4,6 +4,9 @@ Rails.application.routes.draw do
 
   resources :leagues, only: %i[index new create]
 
+  get ':username', to: 'users#show', as: :username
+  get ':username/pronos', to: 'pronos#index', as: :username_pronos
+  get ':username/pronos/:scrapp_id', to: 'pronos#show', as: :username_pronos_scrapp
 
   require "sidekiq/web"
   authenticate :user, ->(user) { user.admin? } do
