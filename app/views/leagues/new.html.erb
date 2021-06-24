@@ -1,0 +1,17 @@
+<div class="banner-background d-flex flex-column justify-content-around" style="background-image: linear-gradient(127deg, rgba(245,240,225,.55), rgba(245,240,225,0.2)), url(<%= image_path('crowd.jpg')%>)">
+  <div class="row">
+    <div class="col-12 col-md-8 col-lg-6 offset-md-2 offset-lg-3">
+      <div class="card-rounded card-blue mx-4 p-4">
+        <p class="mb-4 mt-0 text-warning text-center font-weight-bold h2">Je crée ma ligue</p>
+        <%= simple_form_for @league do |f| %>
+          <%= f.input :name, label: "Quel nom veux-tu donner à ta ligue ?", label_html: { class: 'text-warning h5'}, input_html: { class: 'mb-4' } %>
+          <%= f.input :password, label: "Renseigne un mot de passe pour accéder à ta ligue", label_html: { class: 'text-warning h5'}, input_html: { class: 'mb-4' } %>
+          <p class="text-warning h5">Souhaites-tu que ta ligue soit publiquement visible dans les recherches ?</p>
+          <%= f.input :public, as: :radio_buttons, collection: [[true, 'Oui'], [false, 'Non']], value_method: :first, label_method: :last, wrapper_html: { class: 'd-flex text-white form-check-input-cancel mb-4' }, legend_tag: false %>
+          <%= f.submit "C'est parti !", class: 'button button-warning border-0 text-white h5 w-100' %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+

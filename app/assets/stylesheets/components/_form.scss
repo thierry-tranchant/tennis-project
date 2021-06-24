@@ -1,0 +1,18 @@
+.new_league {
+  .form-check {
+    margin-right: 20px;
+    display: flex;
+    align-items: center;
+    padding-left: 0;
+    input {
+      width: 20px;
+      height: 20px;
+      position: unset !important;
+      margin-top: 0 !important;
+      margin-left: 0 !important;
+    }
+    label {
+      margin-left: 10px;
+    }
+  }
+}

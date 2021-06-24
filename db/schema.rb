@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_22_173504) do
+ActiveRecord::Schema.define(version: 2021_06_23_143900) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -63,7 +63,7 @@ ActiveRecord::Schema.define(version: 2021_06_22_173504) do
 
   create_table "leagues", force: :cascade do |t|
     t.string "name"
-    t.string "encrypted_password"
+    t.string "password"
     t.boolean "public"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -90,7 +90,6 @@ ActiveRecord::Schema.define(version: 2021_06_22_173504) do
 
   create_table "pronos", force: :cascade do |t|
     t.bigint "tournament_id", null: false
-    t.bigint "leagueplayer_id", null: false
     t.integer "winner_id"
     t.integer "loser_id"
     t.string "round"
@@ -99,9 +98,10 @@ ActiveRecord::Schema.define(version: 2021_06_22_173504) do
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "game_id", null: false
     t.boolean "successful"
+    t.bigint "user_id", null: false
     t.index ["game_id"], name: "index_pronos_on_game_id"
-    t.index ["leagueplayer_id"], name: "index_pronos_on_leagueplayer_id"
     t.index ["tournament_id"], name: "index_pronos_on_tournament_id"
+    t.index ["user_id"], name: "index_pronos_on_user_id"
   end
 
   create_table "rankings", force: :cascade do |t|
@@ -180,8 +180,8 @@ ActiveRecord::Schema.define(version: 2021_06_22_173504) do
   add_foreign_key "participants", "scrapps"
   add_foreign_key "participants", "tennisplayers"
   add_foreign_key "pronos", "games"
-  add_foreign_key "pronos", "leagueplayers"
   add_foreign_key "pronos", "tournaments"
+  add_foreign_key "pronos", "users"
   add_foreign_key "rankings", "tennisplayers"
   add_foreign_key "tournaments", "leagues"
   add_foreign_key "tournaments", "scrapps"

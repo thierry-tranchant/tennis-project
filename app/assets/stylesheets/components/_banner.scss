@@ -1,8 +1,4 @@
 .banner {
-  background-image: linear-gradient(127deg, rgba(245,240,225,.55), rgba(245,240,225,0.2)), url('banner-min.png');
-  background-size: cover;
-  background-position: center;
-  height: 92vh;
   h1 {
     font-size: 70px;
     font-weight: 700;
@@ -11,4 +7,10 @@
     font-size: 40px;
     font-weight: 600;
   }
+}
+
+.banner-background {
+  background-size: cover;
+  background-position: center;
+  height: 92vh;
 }
