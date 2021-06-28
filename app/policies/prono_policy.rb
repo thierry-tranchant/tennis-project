@@ -4,4 +4,8 @@ class PronoPolicy < ApplicationPolicy
       scope.all
     end
   end
+
+  def create?
+    user.username == record.user.username
+  end
 end

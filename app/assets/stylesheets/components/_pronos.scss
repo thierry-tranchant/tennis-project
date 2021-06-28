@@ -1,0 +1,80 @@
+.game-box {
+  border-radius: 5px;
+  margin: auto auto;
+  width: 170px;
+}
+
+.arrow-between-games {
+  font-size: 30px;
+}
+
+.form-player-box, .arrow-between-games {
+  margin: auto auto;
+}
+
+.form-player-box {
+  display: flex;
+  width: 170px;
+  opacity: 0.8;
+}
+
+.player-box {
+  display: flex;
+  height: 40px;
+  margin-bottom: 5px;
+  width: 100%;
+}
+
+.player-seed {
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background-color: $orange;
+    color: white;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    flex: 0 0 24px;
+  }
+
+.player-name {
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  background-color: $blue;
+  color: $orange;
+  flex-grow: 1;
+  padding-left: 15px;
+  input {
+    background-color: $blue;
+    border: none;
+  }
+}
+
+
+
+.player-result {
+  background-color: $blue;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  flex: 0 0 17px;
+  .fa-check-circle {
+    color: green;
+    padding-right: 5px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .fa-times-circle {
+    color: red;
+    padding-bottom: 3px;
+    padding-right: 5px;
+    font-size: 12px;
+  }
+}

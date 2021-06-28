@@ -5,7 +5,23 @@ class Participant < ApplicationRecord
   belongs_to :scrapp
   belongs_to :tennisplayer
 
+  def obtain_seed
+    return "(#{seed})" unless seed.nil?
+    return "(Q)" if qualified
+    return "WC" if wildcard
+    return "LL" if luckyloser
+    " " if %w[Qualified Lucky Bye].include?(tennisplayer.tennisplayer_url)
+  end
 
+  def name
+    case tennisplayer.first_name
+    when 'Lucky' then return 'Lucky Loser'
+    when 'Qualified' then return 'Qualified'
+    when 'Bye' then return 'Bye'
+    else
+      "#{tennisplayer.first_name} #{tennisplayer.last_name}"
+    end
+  end
 
   def self.create_participants_from_draw_table(html_doc, scrapp)
     html_doc.search('#scoresDrawTable tbody').first.search('> tr').each do |table_row|
