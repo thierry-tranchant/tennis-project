@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_23_143900) do
+ActiveRecord::Schema.define(version: 2021_06_24_131812) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -89,18 +89,14 @@ ActiveRecord::Schema.define(version: 2021_06_23_143900) do
   end
 
   create_table "pronos", force: :cascade do |t|
-    t.bigint "tournament_id", null: false
     t.integer "winner_id"
     t.integer "loser_id"
-    t.string "round"
-    t.integer "index"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "game_id", null: false
     t.boolean "successful"
     t.bigint "user_id", null: false
     t.index ["game_id"], name: "index_pronos_on_game_id"
-    t.index ["tournament_id"], name: "index_pronos_on_tournament_id"
     t.index ["user_id"], name: "index_pronos_on_user_id"
   end
 
@@ -180,7 +176,6 @@ ActiveRecord::Schema.define(version: 2021_06_23_143900) do
   add_foreign_key "participants", "scrapps"
   add_foreign_key "participants", "tennisplayers"
   add_foreign_key "pronos", "games"
-  add_foreign_key "pronos", "tournaments"
   add_foreign_key "pronos", "users"
   add_foreign_key "rankings", "tennisplayers"
   add_foreign_key "tournaments", "leagues"
