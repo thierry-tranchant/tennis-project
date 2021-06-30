@@ -27,5 +27,5 @@
     cron: '1 5,17 * * *'
     class: FillWinsWithByeJob
   fill_games_results_for_current_tournaments_job:
-    cron: '* * * * *'
+    cron: '1 0,2,4,6,8,10,12,14,16,18,20,22 * * *'
     class: FillGamesResultsForCurrentTournamentsJob
