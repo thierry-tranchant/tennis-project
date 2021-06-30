@@ -1,5 +1,6 @@
 <div id="prono-tournament-table" class="my-4 mx-5">
-  <%= simple_form_for @scrapp, url: '/pronos', method: 'post', html: { style: "
+  <%= simple_form_for @scrapp, url: "/#{current_user.username}/pronos/#{@scrapp.id}", method: 'post', html: { style: "
+  margin-right: 30px;
   display: grid;
   row-gap: 20px;
   grid-template-columns: repeat(#{@rounds.length * 2 + 1}, 1fr);
@@ -49,12 +50,9 @@
             grid-column-end: <%= game.grid_column %>;
             grid-row-start: <%= game.previous_game(game.first_player_previous_game_index).grid_row_start %>;
             grid-row-end: <%= game.previous_game(game.first_player_previous_game_index).grid_row_end + 1 %>;">
-            <div class="player-seed">
-
-            </div>
             <div class="player-name">
               <%= scrapp.simple_fields_for :prono do |f| %>
-              <%= f.input :winner, input_html: { class: 'text-warning', name: "prono-#{game.first_player_previous_game_index}" }, wrapper_html: { class: 'mb-0' }, label: false %>
+              <%= f.input :winner, as: :text, input_html: { rows: 1, class: 'text-warning', readonly: true, name: "prono-#{game.first_player_previous_game_index}" }, wrapper_html: { class: 'mb-0' }, label: false %>
             <% end %>
             </div>
             <div class="player-result">
@@ -75,12 +73,9 @@
             grid-column-end: <%= game.grid_column %>;
             grid-row-start: <%= game.previous_game(game.second_player_previous_game_index).grid_row_start %>;
             grid-row-end: <%= game.previous_game(game.second_player_previous_game_index).grid_row_end + 1 %>;">
-            <div class="player-seed">
-
-            </div>
             <div class="player-name">
               <%= scrapp.simple_fields_for :prono do |f| %>
-                <%= f.input :winner, input_html: { class: 'text-warning', name: "prono-#{game.second_player_previous_game_index}" }, wrapper_html: { class: 'mb-0' }, label: false %>
+                <%= f.input :winner, as: :text, input_html: { rows: 1, class: 'text-warning', readonly: true, name: "prono-#{game.second_player_previous_game_index}" }, wrapper_html: { class: 'mb-0' }, label: false %>
               <% end %>
             </div>
 
@@ -102,17 +97,24 @@
       grid-column-start: <%= @rounds.length * 2 + 1 %>;
       grid-column-end: <%= @rounds.length * 2 + 1 %>;
       grid-row-start: 1;
-      grid-row-end: <%= @rounds.max + 1%>">
-      <div class="player-seed">
-
-      </div>
+      grid-row-end: <%= @rounds.max + 1%>;">
       <div class="player-name">
         <%= scrapp.simple_fields_for :prono do |f| %>
-          <%= f.input :winner, input_html: { class: 'text-warning', name: "prono-#{@games.count}" }, wrapper_html: { class: 'mb-0' }, label: false %>
+          <%= f.input :winner, as: :text, input_html: { rows: 1, class: 'text-warning', readonly: true, name: "prono-#{@games.count}" }, wrapper_html: { class: 'mb-0' }, label: false %>
         <% end %>
       </div>
       <div class="player-result">
+        <i class="fas fa-trophy text-warning"></i>
       </div>
+    </div>
+    <div style="
+      grid-column-start: <%= @rounds.length * 2 %>;
+      grid-column-end: <%= @rounds.length * 2 + 2 %>;
+      grid-row-start: 1;
+      grid-row-end: 2;
+      margin: auto auto">
+      <%= scrapp.submit 'Valider mes pronos',
+      class: "button button-warning border-0 text-white h5 mr-4" %>
     </div>
   <% end %>
 </div>
