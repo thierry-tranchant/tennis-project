@@ -16,10 +16,38 @@ class PronosController < ApplicationController
   end
 
   def create
-    raise
+    pronos = []
+    params.each do |key, player|
+      next unless /prono-[0-9]+/.match?(key)
+
+      winner = Tennisplayer.find_by(first_name: player.split[0], last_name: player.split[1..].join(' '))
+      scrapp = Scrapp.find(params[:scrapp_id])
+      game = Game.find_by(index: /[0-9]+/.match(key)[0], scrapp: scrapp)
+      loser = winner == game.first_player ? game.second_player : game.first_player
+      prono = Prono.new(winner: winner, loser: loser, game: game, user: User.find_by(username: params[:username]))
+      authorize prono
+      #render "/#{params[:username]}/pronos/#{scrapp.id}/new" && return unless prono.valid?
+      pronos << prono
+    end
+    pronos.each do |prono|
+      prono.save!
+    end
+    redirect_to username_pronos_scrapp_path
   end
 
   def show
+    @scrapp = Scrapp.find(params[:scrapp_id])
+    @rounds = [64, 32, 16, 8, 4, 2, 1].select { |number| number <= @scrapp.games.find_by(index: 1).round }
+  end
 
+  private
+
+  def create_prono(key, player)
+    winner = Tennisplayer.find_by(first_name: player.split[0], last_name: player.split[1..].join)
+    scrapp = Scrapp.find(params[:scrapp_id])
+    game = Game.find_by(index: /[0-9]+/.match(key)[0], scrapp: scrapp)
+    loser = winner == game.first_player ? game.second_player : game.first_player
+    Prono.new(winner: winner, loser: loser, game: game, user: User.find_by(username: params[:username]))
+    authorize prono
   end
 end

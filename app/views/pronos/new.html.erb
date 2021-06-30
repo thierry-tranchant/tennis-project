@@ -1,5 +1,5 @@
 <div id="prono-tournament-table" class="my-4 mx-5">
-  <%= simple_form_for @scrapp, url: '/pronos', method: 'post', html: { style: "
+  <%= simple_form_for @scrapp, url: "/#{current_user.username}/pronos/#{@scrapp.id}", method: 'post', html: { style: "
   margin-right: 30px;
   display: grid;
   row-gap: 20px;
@@ -52,7 +52,7 @@
             grid-row-end: <%= game.previous_game(game.first_player_previous_game_index).grid_row_end + 1 %>;">
             <div class="player-name">
               <%= scrapp.simple_fields_for :prono do |f| %>
-              <%= f.input :winner, as: :text, input_html: { rows: 1, class: 'text-warning', disabled: true, name: "prono-#{game.first_player_previous_game_index}" }, wrapper_html: { class: 'mb-0' }, label: false %>
+              <%= f.input :winner, as: :text, input_html: { rows: 1, class: 'text-warning', readonly: true, name: "prono-#{game.first_player_previous_game_index}" }, wrapper_html: { class: 'mb-0' }, label: false %>
             <% end %>
             </div>
             <div class="player-result">
@@ -75,7 +75,7 @@
             grid-row-end: <%= game.previous_game(game.second_player_previous_game_index).grid_row_end + 1 %>;">
             <div class="player-name">
               <%= scrapp.simple_fields_for :prono do |f| %>
-                <%= f.input :winner, as: :text, input_html: { rows: 1, class: 'text-warning', disabled: true, name: "prono-#{game.second_player_previous_game_index}" }, wrapper_html: { class: 'mb-0' }, label: false %>
+                <%= f.input :winner, as: :text, input_html: { rows: 1, class: 'text-warning', readonly: true, name: "prono-#{game.second_player_previous_game_index}" }, wrapper_html: { class: 'mb-0' }, label: false %>
               <% end %>
             </div>
 
@@ -100,7 +100,7 @@
       grid-row-end: <%= @rounds.max + 1%>;">
       <div class="player-name">
         <%= scrapp.simple_fields_for :prono do |f| %>
-          <%= f.input :winner, as: :text, input_html: { rows: 1, class: 'text-warning', disabled: true, name: "prono-#{@games.count}" }, wrapper_html: { class: 'mb-0' }, label: false %>
+          <%= f.input :winner, as: :text, input_html: { rows: 1, class: 'text-warning', readonly: true, name: "prono-#{@games.count}" }, wrapper_html: { class: 'mb-0' }, label: false %>
         <% end %>
       </div>
       <div class="player-result">

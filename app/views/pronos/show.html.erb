@@ -1,0 +1,114 @@
+<div id="prono-tournament-table" class="my-4 mx-5" style="
+  margin-right: 30px;
+  display: grid;
+  row-gap: 20px;
+  grid-template-columns: repeat(#{@rounds.length * 2 + 1}, 1fr);
+  grid-template-rows: repeat(#{@rounds.max}, 1fr);">
+  <% @games = @scrapp.games %>
+  <% @rounds.each do |round| %>
+    <% @games.select { |game| game.round == round }.each do |game| %>
+      <% if round == @rounds.max %>
+        <div class="game-box" style="
+          grid-column-start: <%= game.grid_column %>;
+          grid-column-end: <%= game.grid_column %>;
+          grid-row-start: <%= game.grid_row_start %>;
+          grid-row-end: <%= game.grid_row_end %>;">
+          <div class="player-box" id="game-<%= game.index %>" data-prono="<%= game.next_game_index %>" data-player="first">
+            <div class="player-seed">
+              <%= game.first_player.participants.find_by(scrapp: @scrapp).obtain_seed %>
+            </div>
+            <div class="player-name">
+              <%= game.first_player.participants.find_by(scrapp: @scrapp).name %>
+            </div>
+            <div class="player-result">
+              <i class="fas fa-check-circle" data-action="click->pronew#winner"></i>
+            </div>
+          </div>
+          <div class="player-box" id="game-<%= game.index %>" data-prono="<%= game.next_game_index %>" data-player="second">
+            <div class="player-seed">
+              <%= game.second_player.participants.find_by(scrapp: @scrapp).obtain_seed %>
+            </div>
+            <div class="player-name">
+              <%= game.second_player.participants.find_by(scrapp: @scrapp).name %>
+            </div>
+            <div class="player-result">
+              <i class="fas fa-check-circle" data-action="click->pronew#winner"></i>
+            </div>
+          </div>
+        </div>
+      <% else %>
+        <div class="arrow-between-games" style= "
+          grid-column-start: <%= game.grid_column - 1 %>;
+          grid-column-end: <%= game.grid_column - 1 %>;
+          grid-row-start: <%= game.previous_game(game.first_player_previous_game_index).grid_row_start %>;
+          grid-row-end: <%= game.previous_game(game.first_player_previous_game_index).grid_row_end + 1 %>;">
+          <i class="fas fa-chevron-right text-warning"></i>
+        </div>
+        <div class="game-player-box", id="game-<%= game.index %>" data-prono="<%= game.next_game_index %>" data-player="first" style="
+          grid-column-start: <%= game.grid_column %>;
+          grid-column-end: <%= game.grid_column %>;
+          grid-row-start: <%= game.previous_game(game.first_player_previous_game_index).grid_row_start %>;
+          grid-row-end: <%= game.previous_game(game.first_player_previous_game_index).grid_row_end + 1 %>;">
+          <div class="player-name">
+            <%= game.first_player.participants.find_by(scrapp: @scrapp).name %>
+          </div>
+          <div class="player-result">
+            <i class="fas fa-check-circle" data-action="click->pronew#winner"></i>
+          </div>
+        </div>
+
+
+        <div class="arrow-between-games" style= "
+          grid-column-start: <%= game.grid_column - 1 %>;
+          grid-column-end: <%= game.grid_column - 1 %>;
+          grid-row-start: <%= game.previous_game(game.second_player_previous_game_index).grid_row_start %>;
+          grid-row-end: <%= game.previous_game(game.second_player_previous_game_index).grid_row_end + 1 %>;">
+          <i class="fas fa-chevron-right text-warning"></i>
+        </div>
+        <div class="form-player-box", id="game-<%= game.index %>" data-prono="<%= game.next_game_index %>" data-player="second" style="
+          grid-column-start: <%= game.grid_column %>;
+          grid-column-end: <%= game.grid_column %>;
+          grid-row-start: <%= game.previous_game(game.second_player_previous_game_index).grid_row_start %>;
+          grid-row-end: <%= game.previous_game(game.second_player_previous_game_index).grid_row_end + 1 %>;">
+          <div class="player-name">
+            <%= game.second_player.participants.find_by(scrapp: @scrapp).name %>
+          </div>
+
+          <div class="player-result">
+            <i class="fas fa-check-circle" data-action="click->pronew#winner"></i>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+  <div class="arrow-between-games" style= "
+    grid-column-start: <%= @rounds.length * 2 %>;
+    grid-column-end: <%= @rounds.length * 2 %>;
+    grid-row-start: 1;
+    grid-row-end: <%= @rounds.max + 1%>">
+    <i class="fas fa-chevron-right text-warning"></i>
+  </div>
+  <div class="form-player-box", id='final' style="
+    grid-column-start: <%= @rounds.length * 2 + 1 %>;
+    grid-column-end: <%= @rounds.length * 2 + 1 %>;
+    grid-row-start: 1;
+    grid-row-end: <%= @rounds.max + 1%>;">
+    <div class="player-name">
+      <%= scrapp.simple_fields_for :prono do |f| %>
+        <%= f.input :winner, as: :text, input_html: { rows: 1, class: 'text-warning', readonly: true, name: "prono-#{@games.count}" }, wrapper_html: { class: 'mb-0' }, label: false %>
+      <% end %>
+    </div>
+    <div class="player-result">
+      <i class="fas fa-trophy text-warning"></i>
+    </div>
+  </div>
+  <div style="
+    grid-column-start: <%= @rounds.length * 2 %>;
+    grid-column-end: <%= @rounds.length * 2 + 2 %>;
+    grid-row-start: 1;
+    grid-row-end: 2;
+    margin: auto auto">
+    <%= scrapp.submit 'Valider mes pronos',
+    class: "button button-warning border-0 text-white h5 mr-4" %>
+  </div>
+</div>
