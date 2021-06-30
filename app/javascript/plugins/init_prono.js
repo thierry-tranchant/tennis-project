@@ -43,6 +43,7 @@ const initProno = () => {
         even = first_or_second_player(isEven(element.id.slice(-2)));
       }
     })
+    descendants.push(document.querySelector('#final'));
     descendants.forEach((descendant) => {
       const other_player = find_other_player(event.currentTarget.parentNode.parentNode);
       let other_player_name = '';
