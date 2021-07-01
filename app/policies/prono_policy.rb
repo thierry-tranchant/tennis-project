@@ -10,6 +10,10 @@ class PronoPolicy < ApplicationPolicy
   end
 
   def show?
-    create?
+    true
+  end
+
+  def index?
+    true
   end
 end

@@ -1,0 +1,22 @@
+<div class="container text-center">
+  <div class="scrapp-with-pronos-cards-title">
+    <h2 class='my-5 text-warning'> <%= @user == current_user ? "Tes tournois pronostiqués en cours" : "Tournois en cours pronostiqués par #{@user.username}"%> </h2>
+  </div>
+
+  <div class="scrapp-with-pronos-cards">
+    <% @scrapps.each do |scrapp| %>
+      <%= link_to username_pronos_scrapp_path(@user.username, scrapp.id) do %>
+        <div class="card-rounded card-scrapp d-flex flex-column align-items-center justify-content-center" style= "background-image: linear-gradient(127deg, rgba(245,240,225,.55), rgba(245,240,225,0.2)), url(<%= image_path('scrapp-banner.jpg')%>);">
+          <h3><%= scrapp.tournament_name %></h3>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+  <% if @scrapps.empty? %>
+    <p class='message message-blue text-warning h5'>
+      <%= @user == current_user ? "Vous n'avez pas de tournois pronostiqués en cours." : "#{@user.username} n'a pas de tournois pronostiqués en cours."%>
+    </p>
+  <% end %>
+</div>
+
+

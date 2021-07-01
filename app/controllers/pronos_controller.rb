@@ -1,6 +1,9 @@
 class PronosController < ApplicationController
+  skip_after_action :verify_policy_scoped, only: :index
+
   def index
-    @scrapps = Srapp.pronos.where(user: User.find_by(username: params[:username]))
+    @scrapps = Scrapp.includes(:pronos).reject { |scrapp| scrapp.pronos.where(user: User.find_by(username: params[:username])).empty? }
+    @user = User.find_by(username: params[:username])
   end
 
   def new
