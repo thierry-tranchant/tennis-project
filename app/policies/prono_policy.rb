@@ -8,4 +8,8 @@ class PronoPolicy < ApplicationPolicy
   def create?
     user.username == record.user.username
   end
+
+  def show?
+    create?
+  end
 end

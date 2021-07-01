@@ -7,6 +7,7 @@ class Scrapp < ApplicationRecord
   has_many :participants
   has_many :tournaments
   has_many :games
+  has_many :pronos, through: :games
 
   ROUNDS = [['finals', 1], ['final', 1], ['semifinals', 2], ['semi-finals', 2], ['quarterfinals', 4], ['quarter-finals', 4], ['round of 16', 8], ['round of 32', 16], ['round of 64', 32], ['round of 128', 64]]
   ROUNDS_NUMBER = [64, 32, 16, 8, 4, 2, 1]
