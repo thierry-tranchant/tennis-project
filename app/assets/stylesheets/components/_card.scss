@@ -1,5 +1,5 @@
 .card-rounded {
-  border-radius: 5px;
+  border-radius: 10px;
 }
 
 .card-white {
@@ -8,4 +8,11 @@
 
 .card-blue {
   background-color: $blue;
+}
+
+.card-scrapp {
+  background-size: cover;
+  background-position: center;
+  height: 300px;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
 }

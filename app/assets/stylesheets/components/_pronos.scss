@@ -1,4 +1,4 @@
-.game-box {
+.game-box, .game-box-show {
   border-radius: 5px;
   margin: auto auto;
   width: 140px;
@@ -8,8 +8,74 @@
   font-size: 30px;
 }
 
-.form-player-box, .arrow-between-games {
+.form-player-box, .arrow-between-games, .show-prono-box {
   margin: auto auto;
+}
+
+.show-prono-box {
+  display: flex;
+  flex-direction: column;
+  width: 110px;
+  .result-box {
+    margin-bottom: 8px;
+    .result, .winner {
+      font-size: 12px;
+    }
+    .result {
+      padding-top: 4px;
+      padding-bottom: 3px;
+      text-align: center;
+      font-size: 12px;
+      background-color: $orange;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+    }
+    .winner {
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      display: flex;
+      color: $orange;
+      background-color: $blue;
+      align-items: center;
+      padding-left: 10px;
+    }
+  }
+  .game-player-box {
+    display: flex;
+    flex-direction: column;
+    opacity: 0.6 !important;
+    .ton-prono {
+      padding-top: 4px;
+      padding-bottom: 3px;
+      text-align: center;
+      font-size: 12px;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+    }
+  }
+  .player-name, .winner {
+      padding-top: 4px;
+      padding-bottom: 4px;
+      border-bottom-right-radius: 5px;
+      border-bottom-left-radius: 5px;
+      padding-right: 5px;
+  }
+}
+
+.game-box-show {
+  .player-name {
+    border-top-right-radius: 5px ;
+    border-bottom-right-radius: 5px ;
+    border-right: none;
+  }
+}
+
+#final {
+  .player-name {
+    border-top-right-radius: 0 !important ;
+    border-bottom-right-radius: 0 !important;
+    border-right: none;
+  }
 }
 
 .form-player-box {

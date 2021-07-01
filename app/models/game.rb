@@ -56,4 +56,8 @@ class Game < ApplicationRecord
     round_diff = index > round ? index - ROUNDS_NUMBER.select { |round_num| round_num > round && round_num <= max_round }.sum : index
     index + round - round_diff.div(2)
   end
+
+  def next_game
+    Game.find_by(scrapp: scrapp, index: next_game_index)
+  end
 end
